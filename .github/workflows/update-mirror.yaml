@@ -1,0 +1,32 @@
+name: Sync forked repository
+
+on:
+  schedule:
+    - cron: '0 2 * * *'  # Runs every day at 2 AM (UTC), adjust as needed
+  workflow_dispatch:  # Allows manual triggering of the workflow
+
+jobs:
+  sync-fork:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Install GitHub CLI
+        run: sudo apt-get install gh -y
+
+      - name: Sync all branches from upstream
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          UPSTREAM_REPO="hcengineering/platform"  # Replace with the actual upstream repository
+          FORK_REPO="MelTheDev/huly-platform"
+          
+          # Fetch all branches from the upstream repo
+          BRANCHES=$(gh api "repos/$UPSTREAM_REPO/branches" --jq '.[].name')
+          
+          # Loop through each branch and sync it
+          for branch in $BRANCHES; do
+            echo "Syncing branch $branch from upstream to fork"
+            gh repo sync "$FORK_REPO" --source "$UPSTREAM_REPO" -b "$branch"
+          done
