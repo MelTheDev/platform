@@ -20,7 +20,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           UPSTREAM_REPO="hcengineering/platform"  # Replace with the actual upstream repository
-          FORK_REPO="MelTheDev/huly-platform"
+          FORK_REPO="MelTheDev/platform"
           
           # Fetch all branches from the upstream repo
           BRANCHES=$(gh api "repos/$UPSTREAM_REPO/branches" --jq '.[].name')
